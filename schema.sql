@@ -1,0 +1,83 @@
+CREATE DATABASE IF NOT EXISTS momentum_os CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE momentum_os;
+
+CREATE TABLE IF NOT EXISTS users (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(254) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS app_state (
+  user_id BIGINT UNSIGNED PRIMARY KEY,
+  state_json JSON NOT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_app_state_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS habits (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  name VARCHAR(80) NOT NULL,
+  category VARCHAR(40) NOT NULL DEFAULT 'Personal',
+  preferred_time VARCHAR(20) NOT NULL DEFAULT 'Anytime',
+  reason VARCHAR(160) NULL,
+  color CHAR(7) NULL,
+  created_on DATE NOT NULL,
+  archived TINYINT(1) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_habits_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_habits_user (user_id, archived)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS habit_completions (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  habit_id BIGINT UNSIGNED NOT NULL,
+  completed_on DATE NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_completions_habit FOREIGN KEY (habit_id) REFERENCES habits(id) ON DELETE CASCADE,
+  UNIQUE KEY uq_habit_completion (habit_id, completed_on)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS tasks (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  title VARCHAR(180) NOT NULL,
+  priority ENUM('low','normal','high') NOT NULL DEFAULT 'normal',
+  due_date DATE NULL,
+  is_completed TINYINT(1) NOT NULL DEFAULT 0,
+  completed_on DATE NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_tasks_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_tasks_user (user_id, is_completed, due_date)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS daily_reflections (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  reflected_on DATE NOT NULL,
+  mood ENUM('low','okay','good','great') NULL,
+  note VARCHAR(500) NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_reflections_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY uq_reflection_user_date (user_id, reflected_on)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS focus_sessions (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT UNSIGNED NOT NULL,
+  minutes SMALLINT UNSIGNED NOT NULL,
+  session_type ENUM('focus','short_break','long_break') NOT NULL DEFAULT 'focus',
+  finished_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_focus_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_focus_user_date (user_id, finished_at)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS user_preferences (
+  user_id BIGINT UNSIGNED PRIMARY KEY,
+  preferences_json JSON NOT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_preferences_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;

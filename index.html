@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101110">
+  <script>try{const savedTheme=localStorage.getItem('momentum_os_theme_pref');if(savedTheme==='light'||savedTheme==='dark')document.documentElement.dataset.theme=savedTheme;}catch(e){}</script>
+  <meta name="description" content="Momentum is a personal habit, focus and day-planning workspace.">
+  <title>Momentum — Personal OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script defer src="js/utils.js"></script>
+  <script defer src="js/storage.js"></script>
+  <script defer src="js/state.js"></script>
+  <script defer src="js/auth.js"></script>
+  <script defer src="js/habits.js"></script>
+  <script defer src="js/tasks.js"></script>
+  <script defer src="js/timer.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <div class="blueprint-grid" id="blueprint-grid" aria-hidden="true"></div>
+  <div class="motion-field" id="motion-field" aria-hidden="true"></div>
+  <div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
+  <div class="noise-overlay" aria-hidden="true"></div>
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+  <main id="auth-screen" class="auth-screen">
+    <div class="auth-ambient" aria-hidden="true">
+      <span class="ambient-blob ambient-blob-a"></span>
+      <span class="ambient-blob ambient-blob-b"></span>
+      <span class="ambient-blob ambient-blob-c"></span>
+      <span class="ambient-spark spark-a">✳</span>
+      <span class="ambient-spark spark-b">+</span>
+      <span class="ambient-ring ambient-ring-a"></span>
+    </div>
+    <section class="auth-art" aria-hidden="true">
+      <div class="auth-art-top mono">MOMENTUM / PERSONAL OPERATING SYSTEM <span>v1.2 MOTION</span></div>
+      <div class="auth-orbit orbit-one"></div><div class="auth-orbit orbit-two"></div>
+      <div class="auth-float float-square"></div><div class="auth-float float-diamond"></div>
+      <div class="auth-float float-dot"></div><div class="auth-float float-cross">✳</div>
+      <div class="auth-big-type">Small steps.<br><em>Real change.</em></div>
+      <div class="auth-art-bottom"><span>BUILD A LIFE THAT FEELS LIKE YOURS.</span><span>01 — 04</span></div>
+    </section>
+    <section class="auth-panel">
+      <div class="auth-brand-row">
+        <a class="wordmark" href="#" aria-label="Momentum home"><span class="brand-mark">M</span><span>MOMENTUM<span class="wordmark-period">.</span></span></a>
+        <button class="icon-btn theme-switch" type="button" data-theme-switch aria-label="Switch to light theme" title="Switch theme"><span data-lucide="sun-moon"></span></button>
+      </div>
+      <div class="auth-copy">
+        <p class="eyebrow" id="auth-eyebrow">YOUR SPACE TO GROW</p>
+        <h1 id="auth-title">Make room<br>for <em>progress.</em></h1>
+        <p class="muted" id="auth-description">A quieter way to build habits, protect your focus and show up for yourself.</p>
+      </div>
+      <div class="auth-tabs" role="tablist" aria-label="Account access">
+        <button class="auth-tab active" data-auth-mode="signin" role="tab" aria-selected="true">Sign in</button>
+        <button class="auth-tab" data-auth-mode="signup" role="tab" aria-selected="false">Create account</button>
+      </div>
+      <form id="auth-form" class="auth-form">
+        <label id="auth-name-wrap" class="field-wrap hidden">Your name<input class="input" id="auth-name" name="name" autocomplete="name" placeholder="How should we call you?"></label>
+        <label class="field-wrap">Email address<input class="input" id="auth-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+        <label class="field-wrap">Password<input class="input" id="auth-password" name="password" type="password" autocomplete="current-password" minlength="8" placeholder="At least 8 characters" required></label>
+        <p class="auth-error" id="auth-error" role="alert"></p>
+        <button class="btn btn-primary btn-wide" id="auth-submit" type="submit">Sign in <span aria-hidden="true">↗</span></button>
+      </form>
+      <div class="auth-divider"><span>OR</span></div>
+      <button class="btn btn-quiet btn-wide" id="guest-mode" type="button">Explore in demo mode <span aria-hidden="true">→</span></button>
+      <p class="auth-footnote">Prototype mode: account details stay in this browser only. Connect the included PHP/MySQL backend before using real credentials.</p>
+    </section>
+  </main>
+
+  <div id="app-shell" class="app-shell hidden">
+    <aside class="sidebar" id="sidebar">
+      <a class="wordmark sidebar-brand" href="#dashboard" aria-label="Momentum dashboard"><span class="brand-mark">M</span><span>MOMENTUM<span class="wordmark-period">.</span></span></a>
+      <div class="workspace-label mono">PERSONAL WORKSPACE <span class="status-dot"></span></div>
+      <nav class="nav-menu" aria-label="Main navigation">
+        <button class="nav-item active" data-target="dashboard"><span class="nav-icon" data-lucide="layout-dashboard"></span><span>Overview</span><kbd>01</kbd></button>
+        <button class="nav-item" data-target="habits"><span class="nav-icon" data-lucide="orbit"></span><span>Habits</span><kbd>02</kbd></button>
+        <button class="nav-item" data-target="tasks"><span class="nav-icon" data-lucide="list-checks"></span><span>Tasks</span><kbd>03</kbd></button>
+        <button class="nav-item" data-target="focus"><span class="nav-icon" data-lucide="timer"></span><span>Focus room</span><kbd>04</kbd></button>
+        <button class="nav-item" data-target="insights"><span class="nav-icon" data-lucide="chart-no-axes-column-increasing"></span><span>Insights</span><kbd>05</kbd></button>
+        <button class="nav-item" data-target="profile"><span class="nav-icon" data-lucide="fingerprint"></span><span>Your blueprint</span><kbd>06</kbd></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-note"><span class="note-mark">✳</span><p>Consistency is a practice,<br>not a personality trait.</p></div>
+        <button class="nav-item settings-nav" data-target="settings"><span class="nav-icon" data-lucide="settings-2"></span><span>Settings</span></button>
+        <button class="user-chip" id="user-chip" type="button" title="Open settings">
+          <span class="avatar" id="user-avatar">U</span><span class="user-chip-copy"><strong id="user-name">Your space</strong><small id="user-email">Local account</small></span><span class="more-dots">···</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="mobile-menu icon-btn" id="mobile-menu" aria-label="Toggle navigation"><span data-lucide="menu"></span></button>
+        <div class="date-kicker"><span class="status-dot"></span><span class="mono" id="global-date">MONDAY, OCT 25</span></div>
+        <div class="topbar-right">
+          <span class="saved-indicator"><span class="saved-dot"></span> Saved locally</span>
+          <button class="icon-btn theme-switch" id="theme-toggle-quick" data-theme-switch type="button" aria-label="Switch theme" title="Switch theme"><span data-lucide="sun-moon"></span></button>
+          <button class="icon-btn grid-toggle" id="toggle-grid" title="Toggle blueprint grid" aria-label="Toggle blueprint grid"><span data-lucide="grid-2x2"></span></button>
+          <button class="btn btn-small btn-primary" id="btn-quick-add"><span data-lucide="plus"></span> Quick add</button>
+        </div>
+      </header>
+
+      <div class="view-scroller" id="view-scroller">
+        <section class="view active" id="view-dashboard" data-view="dashboard">
+          <div class="page-heading reveal-item">
+            <div><p class="eyebrow" id="today-label">YOUR DAY, IN VIEW</p><h1 id="dashboard-title">Make today <em>count.</em></h1><p class="heading-subtitle">A little progress is still progress. Let's make it yours.</p></div>
+            <div class="heading-meta"><span class="mono" id="dashboard-date-detail">DAY 001 / KEEP GOING</span><span class="heading-line"></span></div>
+          </div>
+          <div class="dashboard-top-grid">
+            <article class="card progress-card reveal-item">
+              <div class="card-topline"><span class="eyebrow">TODAY'S MOMENTUM</span><span class="mono tiny-label" id="daily-date-tag">TODAY / 00</span></div>
+              <div class="progress-hero-row">
+                <div class="progress-copy"><p class="big-stat" id="dash-percentage">0<span>%</span></p><p class="muted" id="dash-progress-caption">Start with one small win.</p><div class="progress-count mono" id="dash-metrics">0 OF 0 HABITS DONE</div></div>
+                <div class="progress-ring-wrap"><svg viewBox="0 0 150 150" class="progress-ring" aria-hidden="true"><circle class="ring-track" cx="75" cy="75" r="64"></circle><circle class="ring-value" id="dash-ring" cx="75" cy="75" r="64"></circle></svg><div class="ring-center"><span data-lucide="sparkles"></span><small>DAY BY DAY</small></div></div>
+              </div>
+              <div class="card-footerline"><span class="mini-status"></span><span id="progress-footer-copy">Your next win is one check away.</span><span class="mono" id="dash-streak-mini">0 DAY STREAK</span></div>
+            </article>
+            <article class="card streak-card reveal-item">
+              <div class="card-topline"><span class="eyebrow">YOUR STREAK</span><span class="streak-flame" data-lucide="flame"></span></div>
+              <div class="streak-number-row"><strong id="streak-current">0</strong><span>days<br>in a row</span></div>
+              <p class="muted" id="streak-message">Your streak starts with showing up today.</p>
+              <div class="streak-week" id="streak-week" aria-label="Habit activity this week"></div>
+              <div class="card-footerline"><span class="mono" id="streak-best">BEST STREAK: 0 DAYS</span><span class="streak-arrow">↗</span></div>
+            </article>
+          </div>
+
+          <div class="section-heading reveal-item"><div><p class="eyebrow">THE DAILY PRACTICE</p><h2>Show up for yourself.</h2></div><button class="text-link" data-go="habits">All habits <span>↗</span></button></div>
+          <div class="dashboard-middle-grid">
+            <article class="card habits-today-card reveal-item"><div class="card-heading"><div><span class="section-index mono">01 / CHECK IN</span><h3>Today's habits</h3></div><button class="icon-btn" data-action="add-habit" aria-label="Add a habit"><span data-lucide="plus"></span></button></div><div class="today-habit-list" id="dash-habits-list"></div><div class="empty-action hidden" id="habits-empty-action"><p>Build a small ritual that feels like you.</p><button class="btn btn-outline btn-small" data-action="add-habit">Create your first habit ↗</button></div></article>
+            <div class="dashboard-side-stack">
+              <article class="card water-card reveal-item"><div class="card-heading"><div><span class="section-index mono">02 / REFUEL</span><h3>Hydration</h3></div><span class="water-icon" data-lucide="droplets"></span></div><div class="water-amount"><strong id="water-amount">0</strong><span> / <span id="water-target-label">2,000</span> ml</span></div><div class="progress-track"><div class="progress-fill water-fill" id="water-bar"></div></div><div class="water-control-row"><span class="muted tiny" id="water-remaining">2,000 ml to go</span><div class="inline-actions"><button class="icon-btn mini-icon-btn" id="btn-water-undo" aria-label="Undo water"><span data-lucide="minus"></span></button><button class="btn btn-outline btn-small" id="btn-water-add">+250 ml</button></div></div></article>
+              <article class="card task-peek-card reveal-item"><div class="card-heading"><div><span class="section-index mono">03 / MAKE IT HAPPEN</span><h3>Tasks in motion</h3></div><button class="icon-btn" data-go="tasks" aria-label="View all tasks"><span data-lucide="arrow-up-right"></span></button></div><div class="task-peek-summary"><strong id="task-open-count">0</strong><span>open tasks</span><div class="task-mini-progress"><span id="task-mini-progress"></span></div></div><div class="task-peek-list" id="dash-task-list"></div><button class="text-link full-link" data-go="tasks">Open task board <span>↗</span></button></article>
+            </div>
+          </div>
+
+          <div class="dashboard-bottom-grid">
+            <article class="card focus-mini-card reveal-item"><div class="card-heading"><div><span class="section-index mono">04 / DEEP WORK</span><h3>Protect your focus.</h3></div><span class="focus-symbol" data-lucide="scan"></span></div><div class="focus-mini-row"><div><strong id="focus-today-minutes">0<span>m</span></strong><p class="muted">focused today</p></div><div class="focus-mini-divider"></div><div><strong id="focus-session-count">0</strong><p class="muted">sessions done</p></div><button class="round-arrow" data-go="focus" aria-label="Open focus timer">↗</button></div></article>
+            <article class="card reflection-card reveal-item"><div class="card-heading"><div><span class="section-index mono">05 / CHECK IN WITH YOU</span><h3>How are you, really?</h3></div><span data-lucide="heart-handshake"></span></div><div class="mood-options" id="mood-options"><button class="mood-choice" data-mood="low" aria-label="Low energy">☁️<small>Low</small></button><button class="mood-choice" data-mood="okay" aria-label="Okay">🌤️<small>Okay</small></button><button class="mood-choice" data-mood="good" aria-label="Good">🌿<small>Good</small></button><button class="mood-choice" data-mood="great" aria-label="Great">☀️<small>Great</small></button></div><label class="sr-only" for="daily-note">Daily reflection</label><textarea class="reflection-input" id="daily-note" rows="2" maxlength="500" placeholder="One thing on your mind today…"></textarea><div class="reflection-footer"><span class="muted tiny">Only for you · saved on this device</span><button class="text-link" id="save-reflection">Save note ↗</button></div></article>
+          </div>
+          <footer class="page-foot mono"><span>MOMENTUM / KEEP MOVING</span><span id="dashboard-foot-date">YOUR PACE IS YOUR PACE.</span></footer>
+        </section>
+
+        <section class="view" id="view-habits" data-view="habits">
+          <div class="page-heading"><div><p class="eyebrow">THE THINGS THAT SHAPE YOU</p><h1>Your <em>habits.</em></h1><p class="heading-subtitle">Don't chase a perfect streak. Build a practice you can return to.</p></div><button class="btn btn-primary" data-action="add-habit"><span data-lucide="plus"></span> New habit</button></div>
+          <div class="stats-strip" id="habits-stats-strip"></div>
+          <div class="section-heading compact-heading"><div><p class="eyebrow">YOUR ROUTINES</p><h2>Little by little.</h2></div><div class="filter-pills" id="habit-filter-pills"><button class="filter-pill active" data-filter="all">All habits</button><button class="filter-pill" data-filter="today">Today's plan</button><button class="filter-pill" data-filter="done">Completed</button></div></div>
+          <div class="habit-grid" id="habits-container"></div>
+          <div class="card habit-guidance"><div class="guidance-mark">✳</div><div><p class="eyebrow">A NOTE TO SELF</p><h3>Make it easy to begin.</h3><p class="muted">A habit should fit the life you have today, not an imaginary perfect day. Start smaller than you think you need to.</p></div></div>
+        </section>
+
+        <section class="view" id="view-tasks" data-view="tasks">
+          <div class="page-heading"><div><p class="eyebrow">LESS MENTAL CLUTTER</p><h1>Make space <em>to do.</em></h1><p class="heading-subtitle">Turn thoughts into next steps. One clear thing at a time.</p></div></div>
+          <div class="task-create-row"><span data-lucide="plus"></span><input id="task-input" class="input task-main-input" type="text" placeholder="What's one thing you need to get done?" maxlength="180"><select class="input priority-select" id="task-priority" aria-label="Task priority"><option value="normal">Normal</option><option value="high">High priority</option><option value="low">Low priority</option></select><button class="btn btn-primary" id="task-add-button">Add task <span>↗</span></button></div>
+          <div class="task-board-top"><div class="filter-pills" id="task-filter-pills"><button class="filter-pill active" data-filter="all">Everything <span id="task-filter-all-count">0</span></button><button class="filter-pill" data-filter="open">To do <span id="task-filter-open-count">0</span></button><button class="filter-pill" data-filter="done">Completed <span id="task-filter-done-count">0</span></button></div><label class="sort-wrap mono">SORT <select id="task-sort" aria-label="Sort tasks"><option value="created">Recently added</option><option value="priority">Priority</option><option value="due">Due date</option></select></label></div>
+          <div class="task-list-panel card"><div class="task-list-header mono"><span>NEXT ACTIONS</span><span id="task-list-count">0 ITEMS</span></div><div class="task-list" id="tasks-container"></div></div>
+          <div class="task-footer-note"><span class="note-mark">↳</span><p><strong>Make the next action obvious.</strong> Tasks are not a measure of your worth. They're just a map for what comes next.</p></div>
+        </section>
+
+        <section class="view" id="view-focus" data-view="focus">
+          <div class="page-heading"><div><p class="eyebrow">ONE THING AT A TIME</p><h1>Enter your <em>focus.</em></h1><p class="heading-subtitle">Give one task your attention. Everything else can wait for a moment.</p></div><span class="focus-live-pill"><span class="status-dot"></span> FOCUS ROOM</span></div>
+          <div class="focus-layout"><article class="card focus-main-card"><div class="focus-topline mono"><span id="timer-mode">FOCUS SESSION</span><span id="timer-session-label">SESSION 01</span></div><div class="timer-orbit"><svg class="timer-ring" viewBox="0 0 320 320" aria-hidden="true"><circle class="timer-ring-track" cx="160" cy="160" r="145"></circle><circle class="timer-ring-progress" id="timer-ring-progress" cx="160" cy="160" r="145"></circle></svg><div class="timer-center"><p class="eyebrow" id="timer-small-label">STAY WITH IT</p><div class="timer-display" id="timer-time">25:00</div><span class="muted" id="timer-subtitle">A little room to think.</span></div></div><div class="timer-presets"><button class="preset-btn active" data-timer-mode="focus">Focus <span>25 min</span></button><button class="preset-btn" data-timer-mode="short">Short break <span>5 min</span></button><button class="preset-btn" data-timer-mode="long">Long break <span>15 min</span></button></div><div class="timer-controls"><button class="btn btn-primary timer-start" id="btn-timer-toggle">Start focus <span data-lucide="play"></span></button><button class="btn btn-outline" id="btn-timer-reset" aria-label="Reset timer"><span data-lucide="rotate-ccw"></span> Reset</button></div><p class="timer-tip"><span data-lucide="lightbulb"></span> Try putting your phone away until the timer ends.</p></article><aside class="focus-side"><article class="card focus-stat-card"><p class="eyebrow">TODAY'S FOCUS</p><strong id="focus-page-minutes">0<span> min</span></strong><div class="progress-track"><div class="progress-fill" id="focus-goal-bar"></div></div><div class="split-row"><span class="muted">Daily goal</span><span class="mono" id="focus-goal-label">60 MIN</span></div></article><article class="card intention-card"><p class="eyebrow">SET AN INTENTION</p><h3>What deserves your attention?</h3><textarea id="focus-intention" class="input intention-input" maxlength="180" rows="3" placeholder="e.g. Finish the first draft…"></textarea><button class="btn btn-outline btn-small" id="save-intention">Save intention ↗</button><p class="muted tiny" id="focus-intention-status">It will stay here while you work.</p></article><article class="card focus-quote-card"><span class="quote-mark">“</span><p>Almost everything will work again if you unplug it for a few minutes, including you.</p><span class="mono tiny-label">— ANNE LAMOTT</span></article></aside></div>
+        </section>
+
+        <section class="view" id="view-insights" data-view="insights">
+          <div class="page-heading"><div><p class="eyebrow">NOTICE YOUR OWN PROGRESS</p><h1>Patterns, not <em>pressure.</em></h1><p class="heading-subtitle">A gentle look at the effort you've been putting in.</p></div><span class="range-label mono">LAST 7 DAYS</span></div>
+          <div class="insight-metrics" id="insight-metrics"></div>
+          <div class="insights-grid"><article class="card chart-card"><div class="card-heading"><div><span class="section-index mono">01 / CONSISTENCY</span><h3>Your week at a glance</h3></div><span class="muted tiny">Completed habits</span></div><div class="weekly-chart" id="weekly-chart"></div><div class="chart-legend"><span><i></i> Habit completions</span><span class="muted" id="weekly-chart-caption">Every check counts.</span></div></article><article class="card insight-highlight"><span class="insight-ornament">↗</span><p class="eyebrow">02 / WHAT'S WORKING</p><h3 id="insight-headline">Progress starts with a pattern.</h3><p class="muted" id="insight-copy">Your data will tell a more useful story as you keep showing up.</p><div class="insight-callout" id="insight-action">Try completing one habit at the same time each day.</div></article><article class="card habit-leaderboard-card"><div class="card-heading"><div><span class="section-index mono">03 / MOST CONSISTENT</span><h3>Habits you've returned to</h3></div></div><div id="habit-leaderboard" class="habit-leaderboard"></div></article><article class="card achievements-card"><div class="card-heading"><div><span class="section-index mono">04 / MILESTONES</span><h3>Quiet wins</h3></div><span data-lucide="award"></span></div><div id="achievements-list" class="achievements-list"></div></article></div>
+        </section>
+
+        <section class="view" id="view-profile" data-view="profile">
+          <div class="page-heading"><div><p class="eyebrow">A LITTLE SELF-KNOWLEDGE</p><h1>Your personal <em>blueprint.</em></h1><p class="heading-subtitle">Not a box to fit into. Just a starting point for understanding how you work.</p></div></div>
+          <div class="blueprint-hero card"><div class="blueprint-graphic"><div class="blueprint-circle circle-a"></div><div class="blueprint-circle circle-b"></div><div class="blueprint-cross">✳</div><span class="mono">SELF / 001</span></div><div class="blueprint-copy"><p class="eyebrow">YOUR REFLECTION PROFILE</p><h2 id="personality-result-title">Discover your rhythm.</h2><p class="muted" id="personality-result-copy">Answer a few questions about how you prefer to plan, recharge and move through the day. This is a reflective tool, not a clinical assessment.</p><div class="blueprint-tags" id="personality-traits"><span>Curiosity</span><span>Routines</span><span>Energy</span></div><button class="btn btn-primary" id="start-personality-quiz">Take the reflection quiz <span>↗</span></button></div></div>
+          <div class="section-heading compact-heading"><div><p class="eyebrow">DESIGNED AROUND YOU</p><h2>Your working agreements.</h2></div></div><div class="working-agreements" id="working-agreements"></div>
+          <div class="profile-note"><span class="note-mark">✳</span><p>Your personality profile is a snapshot of your preferences, not a permanent label. You can revisit it whenever you change.</p></div>
+        </section>
+
+        <section class="view" id="view-settings" data-view="settings">
+          <div class="page-heading"><div><p class="eyebrow">MAKE IT FEEL LIKE YOURS</p><h1>Your <em>space.</em></h1><p class="heading-subtitle">A few small choices to make Momentum work with you.</p></div></div>
+          <div class="settings-layout"><div class="settings-section"><p class="eyebrow">APPEARANCE</p><article class="card setting-row"><div class="setting-icon" data-lucide="sun-moon"></div><div class="setting-copy"><h3>Theme</h3><p class="muted">Choose the atmosphere for your workspace.</p></div><div class="segmented-control" id="theme-toggle"><button data-theme-choice="dark" class="active">Dark</button><button data-theme-choice="light">Light</button></div></article><article class="card setting-row"><div class="setting-icon" data-lucide="grid-2x2"></div><div class="setting-copy"><h3>Blueprint grid</h3><p class="muted">Show the subtle construction grid.</p></div><label class="switch"><input type="checkbox" id="setting-grid"><span></span></label></article><article class="card setting-row"><div class="setting-icon" data-lucide="move"></div><div class="setting-copy"><h3>Reduce motion</h3><p class="muted">Tone down movement and transitions.</p></div><label class="switch"><input type="checkbox" id="setting-motion"><span></span></label></article></div>
+          <div class="settings-section"><p class="eyebrow">YOUR DAY</p><article class="card setting-row"><div class="setting-icon" data-lucide="droplets"></div><div class="setting-copy"><h3>Hydration target</h3><p class="muted">Set a daily water reminder goal (in millilitres).</p></div><div class="setting-control"><input class="input compact-input" type="number" min="250" max="6000" step="250" id="setting-water-target"><button class="btn btn-outline btn-small" id="save-water-target">Save</button></div></article><article class="card setting-row"><div class="setting-icon" data-lucide="target"></div><div class="setting-copy"><h3>Focus goal</h3><p class="muted">Your daily target for focused minutes.</p></div><div class="setting-control"><input class="input compact-input" type="number" min="15" max="600" step="15" id="setting-focus-goal"><button class="btn btn-outline btn-small" id="save-focus-goal">Save</button></div></article></div>
+          <div class="settings-section"><p class="eyebrow">DATA & ACCOUNT</p><article class="card setting-row"><div class="setting-icon" data-lucide="database"></div><div class="setting-copy"><h3>Export your data</h3><p class="muted">Download your habits, tasks, reflections and progress as JSON.</p></div><button class="btn btn-outline btn-small" id="export-data">Export JSON ↗</button></article><article class="card setting-row"><div class="setting-icon" data-lucide="upload"></div><div class="setting-copy"><h3>Import a backup</h3><p class="muted">Restore a Momentum JSON export on this device.</p></div><label class="btn btn-outline btn-small file-button">Choose file<input type="file" id="import-data" accept="application/json,.json"></label></article><article class="card setting-row"><div class="setting-icon" data-lucide="log-out"></div><div class="setting-copy"><h3>Sign out</h3><p class="muted">Your locally saved data will stay in this browser.</p></div><button class="btn btn-danger-outline btn-small" id="sign-out">Sign out</button></article></div></div>
+          <div class="backend-notice"><span data-lucide="info"></span><div><strong>Prototype storage</strong><p>Data is saved in your browser. The included <code>backend/</code> folder documents the next XAMPP + PHP + MySQL integration; this build does not send your personal data to a server.</p></div></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="global-modal" aria-hidden="true"><div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-header"><div><p class="eyebrow" id="modal-eyebrow">MAKE IT YOURS</p><h2 id="modal-title">Add a habit</h2></div><button class="icon-btn" id="btn-close-modal" aria-label="Close dialog"><span data-lucide="x"></span></button></div><form class="modal-body" id="modal-body"></form></div></div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', function () {
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
